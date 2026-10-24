@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>ItchLab | itch.io Studio por EternoDev</title>
+  <link rel="icon" type="image/svg+xml" href="src/assets/images/svg/icon.svg">
+
+  <!-- JSZip para compilar y descargar todas las imágenes en ZIP (Local vendor) -->
+  <script src="src/js/vendor/jszip.min.js"></script>
+
+  <!-- Google Fonts Colección Comercial Gratuita (35+ Fuentes OFL) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Audiowide&family=Bangers&family=Bebas+Neue&family=Black+Ops+One&family=Boogaloo&family=Bruno+Ace+SC&family=Bungee&family=Chakra+Petch:wght@700&family=Chango&family=Chewy&family=Cinzel:wght@900&family=Creepster&family=Fredoka:wght@700&family=Inter:wght@400;700;900&family=Lilita+One&family=Luckiest+Guy&family=MedievalSharp&family=Metamorphous&family=Michroma&family=Montserrat:wght@900&family=Nosifer&family=Orbitron:wght@900&family=Oswald:wght@700&family=Permanent+Marker&family=Pixelify+Sans:wght@700&family=Poppins:wght@900&family=Press+Start+2P&family=Righteous&family=Rubik:wght@700;900&family=Russo+One&family=Share+Tech+Mono&family=Silkscreen&family=Sniglet:wght@800&family=Teko:wght@700&family=Titan+One&family=VT323&display=swap" rel="stylesheet">
+
+  <!-- Estilos Modulares (Sin degradados - Estilo Limpio Itch.io) -->
+  <link rel="stylesheet" href="src/css/variables.css">
+  <link rel="stylesheet" href="src/css/layout.css">
+  <link rel="stylesheet" href="src/css/components.css">
+  <link rel="stylesheet" href="src/css/mockup.css">
+</head>
+<body>
+
+  <!-- ========================================== -->
+  <!-- 1. PANTALLA DE INICIO (DASHBOARD ROSA & BLANCO) -->
+  <!-- ========================================== -->
+  <div id="homeView" class="home-view" style="display: flex;">
+    <!-- Barra Superior de Enlaces Sociales EternoDev -->
+    <nav class="top-social-bar" aria-label="Enlaces sociales y proyectos">
+      <!-- 1. EternoDev (Web) -->
+      <a href="https://eternodev.com" target="_blank" rel="noopener noreferrer" class="social-link link-web" title="Web Oficial de EternoDev">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+        <span>EternoDev</span>
+      </a>
+
+      <!-- 2. YouTube -->
+      <a href="https://www.youtube.com/@eternodev" target="_blank" rel="noopener noreferrer" class="social-link link-youtube" title="Canal de YouTube @eternodev">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+        </svg>
+        <span>YouTube</span>
+      </a>
+
+      <!-- 3. GitHub -->
+      <a href="https://github.com/paucg06" target="_blank" rel="noopener noreferrer" class="social-link link-github" title="Perfil de GitHub @paucg06">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+        </svg>
+        <span>GitHub</span>
+      </a>
+
+      <!-- 4. Platano (Buy Me a Coffee) -->
+      <a href="https://buymeacoffee.com/eternodev" target="_blank" rel="noopener noreferrer" class="social-link link-banana" title="Invitame a un platano en Buy Me a Coffee">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="18" height="18" fill="currentColor" style="flex-shrink:0;">
+          <path d="M2 26.431c0-.73.592-1.321 1.322-1.321h.99a1.322 1.322 0 0 1 0 2.643h-.99c-.73 0-1.322-.592-1.322-1.322"/>
+          <path d="M19.783 18h9.435c.695 0 1.045-.876.55-1.392l-2.178-2.272a4.244 4.244 0 0 0-6.181 0l-2.179 2.272c-.492.514-.142 1.392.553 1.392M4.783 18h9.434c.695 0 1.045-.878.553-1.392l-2.18-2.272a4.243 4.243 0 0 0-6.182 0L4.23 16.608c-.492.514-.142 1.392.553 1.392"/>
+          <path d="M16.7 2.029c4.92-.708 7.96 11.897 5.745 16.99-2.215 5.094-6.997 6.21-12.07 8.204-.561.22-1.138.325-1.705.325-1.924 0-2.97 1.582-3.7-.375-.942-2.535.293-5.376 2.76-6.344 2.684-1.053 4.111-3.077 5.185-5.818 1.096-2.795 1.17-3.941 1.166-6.988-.005-2.437-.165-5.594 2.619-5.994"/>
+          <path d="m22.445 19.02-9.46-4.344c-1.086 2.498-3.053 4.411-5.54 5.39-2.881 1.132-4.807 4.23-3.23 7.386 3.151 6.304 18.23-.066 18.23-8.433"/>
+          <path fill-rule="evenodd" d="M18.24 16.482a.75.75 0 0 1 .486.942c-1.98 6.201-7.756 9.065-12.918 9.33a.75.75 0 0 1-.077-1.498c4.738-.243 9.83-2.852 11.566-8.288a.75.75 0 0 1 .943-.486" clip-rule="evenodd"/>
+          <path d="m23.24 26.467-10.197-11.78h9.004c2.126.107 3.794 1.91 3.794 4.097v7.552c0 1.33-1.197 1.736-2.6.131"/>
+        </svg>
+        <span>Platano</span>
+      </a>
+    </nav>
+
+    <div class="home-content">
+      <div class="home-header">
+        <div class="home-logo">
+          <img src="src/assets/images/svg/icon.svg" alt="Logo" class="home-logo-icon">
+          <span id="appMainTitle">ItchLab<span style="color: var(--itch-red);">.io</span></span>
+        </div>
+      </div>
+
+      <!-- Tarjeta Principal: + Nuevo Proyecto -->
+      <div id="homeCreateBox" class="home-create-box" role="button" tabindex="0" onclick="window.createNewProject && window.createNewProject()">
+        <div class="home-plus-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
+        <div class="home-create-title">Nuevo Proyecto</div>
+      </div>
+
+      <!-- Acciones Rápidas de Inicio -->
+      <div class="home-actions-bar">
+        <button id="homeDownloadTemplatesBtn" class="btn btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span>Descargar Medidas (.zip)</span>
+        </button>
+
+        <label class="btn btn-secondary" style="cursor: pointer; margin: 0;">
+          <input type="file" id="homeImportItchFile" accept=".itch,.json" style="display: none;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span>Cargar (.itch)</span>
+        </label>
+      </div>
+
+      <!-- Sección de Proyectos Guardados en Local -->
+      <div class="saved-projects-section">
+        <span class="group-title">Proyectos</span>
+        <div id="savedProjectsGrid" class="saved-projects-grid">
+          <!-- Renderizado dinámico -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 2. PANTALLA PRINCIPAL DEL EDITOR -->
+  <!-- ========================================== -->
+  <div id="editorView" class="app-container" style="display: none;">
+    <!-- Barra Superior -->
+    <header class="app-header">
+      <div class="brand">
+        <button id="btnGoHome" class="btn btn-secondary btn-sm btn-icon-back" title="Volver a Proyectos">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5"></path>
+            <path d="M12 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <img id="btnLogoHome" src="src/assets/images/svg/icon.svg" alt="Logo" class="editor-brand-icon" title="Inicio">
+        <input type="text" id="editorProjectTitleInput" class="editor-project-title-input" value="Mi Juego" title="Nombre del proyecto" placeholder="Nombre del proyecto">
+      </div>
+
+      <!-- Pestañas Dinámicas de Proyectos / Diseños -->
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div id="projectTabsContainer" class="project-tabs-container">
+          <!-- Pestañas dinámicas -->
+        </div>
+        <button id="btnAddTab" class="btn-add-tab" title="Crear nuevo lienzo">+</button>
+      </div>
+
+      <!-- Acciones de Cabecera -->
+      <div class="header-actions">
+        <button id="undoBtn" class="btn btn-secondary btn-sm" title="Deshacer (Ctrl+Z)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13"/></svg>
+          <span>Deshacer</span>
+        </button>
+        <button id="redoBtn" class="btn btn-secondary btn-sm" title="Rehacer (Ctrl+Y)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 019-9 9 9 0 016 2.3L21 13"/></svg>
+          <span>Rehacer</span>
+        </button>
+
+        <button id="openMockupBtn" class="btn btn-secondary btn-sm" title="Ver en catálogo Itch.io">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          <span>Vista Itch</span>
+        </button>
+
+        <button id="copyBtn" class="btn btn-secondary btn-sm" title="Copiar al portapapeles">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <span>Copiar</span>
+        </button>
+
+        <!-- Dropdown de Descarga Completa -->
+        <div class="download-dropdown-wrapper">
+          <button id="downloadBtn" class="btn btn-primary btn-sm" title="Opciones de descarga">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>Descargar ▾</span>
+          </button>
+          <div id="downloadMenu" class="download-menu">
+            <button id="downloadPngBtn" class="download-menu-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+              <span>Imagen Actual (.png)</span>
+            </button>
+            <button id="downloadZipBtn" class="download-menu-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>Todo en ZIP (.zip)</span>
+            </button>
+            <div class="download-menu-divider"></div>
+            <button id="downloadItchBtn" class="download-menu-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              <span>Proyecto (.itch)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Espacio de Trabajo -->
+    <main class="app-workspace">
+      <!-- Barra Lateral de Controles (Capas, Recursos, Editar, Fondo) -->
+      <aside class="app-sidebar">
+        <nav class="sidebar-tabs">
+          <button class="tab-btn active" data-tab="tabLayers">Capas</button>
+          <button class="tab-btn" data-tab="tabEdit">Editar</button>
+          <button class="tab-btn" data-tab="tabBackground">Fondo</button>
+        </nav>
+
+        <!-- 1. Pestaña Capas -->
+        <div id="tabLayers" class="tab-content active">
+          <div class="control-group">
+            <span class="group-title">Texto</span>
+            <button id="addTextBtn" class="btn btn-secondary" style="width: 100%;">+ Texto</button>
+          </div>
+
+          <div class="control-group">
+            <span class="group-title">Figuras</span>
+            <div class="shapes-picker-wrapper">
+              <button type="button" id="btnOpenShapesDropdown" class="btn btn-secondary" style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 6px;">
+                <span>+ Figuras</span>
+                <span style="font-size: 10px; color: var(--itch-muted); margin-left: 4px;">▼</span>
+              </button>
+              <div id="shapesDropdown" class="shapes-dropdown">
+                <div class="shapes-grid-dropdown">
+                  <button type="button" class="shape-opt-btn" data-shape="rect" title="Cuadrado">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                    <span>Cuadrado</span>
+                  </button>
+                  <button type="button" class="shape-opt-btn" data-shape="circle" title="Círculo">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
+                    <span>Círculo</span>
+                  </button>
+                  <button type="button" class="shape-opt-btn" data-shape="triangle" title="Triángulo">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 3 22 21 2 21"/></svg>
+                    <span>Triángulo</span>
+                  </button>
+                  <button type="button" class="shape-opt-btn" data-shape="diamond" title="Rombo">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 22 12 12 22 2 12"/></svg>
+                    <span>Rombo</span>
+                  </button>
+                  <button type="button" class="shape-opt-btn" data-shape="star" title="Estrella">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <span>Estrella</span>
+                  </button>
+                  <button type="button" class="shape-opt-btn" data-shape="hexagon" title="Hexágono">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 21 7.2 21 16.8 12 22 3 16.8 3 7.2"/></svg>
+                    <span>Hexágono</span>
+                  </button>
+                  <button type="button" class="shape-opt-btn" data-shape="heart" title="Corazón">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    <span>Corazón</span>
+                  </button>
+                  <button type="button" class="shape-opt-btn" data-shape="arrow" title="Flecha">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 22 12 16 12 16 22 8 22 8 12 2 12"/></svg>
+                    <span>Flecha</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <span class="group-title">Subir Imagen / Sprite</span>
+            <label class="upload-image-box">
+              <input type="file" id="imageUpload" accept="image/png, image/jpeg, image/webp" style="display: none;">
+              <div class="upload-plus-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </div>
+              <span class="upload-image-title">Subir Imagen</span>
+            </label>
+          </div>
+
+          <div class="control-group">
+            <span class="group-title">Capas</span>
+            <div id="layerList" class="layer-list">
+              <!-- Capas inyectadas dinámicamente -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Pestaña Editar (Tipografía y controles limpios) -->
+        <div id="tabEdit" class="tab-content">
+          <div id="noSelectionMsg" style="font-size: 12px; color: var(--itch-muted); text-align: center; padding: 24px;">
+            Haz clic en cualquier objeto del lienzo para editarlo.
+          </div>
+
+          <!-- Edición de Texto -->
+          <div id="propGroupText" class="control-group" style="display: none;">
+            <!-- Custom Font Picker con Previsualización Real -->
+            <div class="control-group">
+              <span class="group-title">Tipografía</span>
+              <div class="font-picker-wrapper">
+                <div id="fontPickerTrigger" class="font-picker-trigger">
+                  <span id="fontPickerLabel" style="font-family: 'Lilita One';">Lilita One</span>
+                  <span style="font-size: 10px; color: var(--itch-muted);">▼</span>
+                </div>
+                <div id="fontPickerDropdown" class="font-picker-dropdown">
+                  <input type="text" id="fontSearchInput" class="font-picker-search" placeholder="Buscar fuentes...">
+                  <button type="button" id="fontDropdownGoogleFontsBtn" class="font-dropdown-gf-btn" title="Explorar todo el catálogo de Google Fonts">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
+                    <span>Google Fonts (1.900+)</span>
+                  </button>
+                  <div id="fontPickerList"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slider Tamaño Fuente -->
+            <div class="slider-container">
+              <div class="slider-header">
+                <span class="slider-label">Tamaño Fuente</span>
+                <span id="propSizeVal" class="slider-val">44px</span>
+              </div>
+              <input type="range" id="propSize" class="input-range" min="14" max="140" value="44">
+            </div>
+
+            <!-- Color de Relleno -->
+            <div class="color-picker-row">
+              <span class="color-picker-label">Color de Texto</span>
+              <div class="color-picker-controls">
+                <input type="text" id="propColorHex" class="hex-color-input" value="#222222" maxlength="7" spellcheck="false">
+                <input type="color" id="propColor" class="color-input-clean" value="#222222">
+              </div>
+            </div>
+
+            <!-- Contorno / Outline -->
+            <div class="slider-container">
+              <div class="slider-header">
+                <span class="slider-label">Contorno (Outline)</span>
+                <span id="propStrokeWidthVal" class="slider-val">0px</span>
+              </div>
+              <input type="range" id="propStrokeWidth" class="input-range" min="0" max="24" value="0">
+              <div class="color-picker-row" style="margin-top: 8px;">
+                <span class="color-picker-label">Color Contorno</span>
+                <div class="color-picker-controls">
+                  <input type="text" id="propStrokeColorHex" class="hex-color-input" value="#000000" maxlength="7" spellcheck="false">
+                  <input type="color" id="propStrokeColor" class="color-input-clean" value="#000000">
+                </div>
+              </div>
+            </div>
+
+            <!-- Sombras: 3D y Difuminado -->
+            <div class="slider-container">
+              <div class="slider-header">
+                <span class="slider-label">Sombra 3D Sólida</span>
+                <span id="propShadowDepthVal" class="slider-val">0px</span>
+              </div>
+              <input type="range" id="propShadowDepth" class="input-range" min="0" max="24" value="0">
+
+              <div class="slider-header" style="margin-top: 10px;">
+                <span class="slider-label">Difuminado Sombra</span>
+                <span id="propShadowBlurVal" class="slider-val">0px</span>
+              </div>
+              <input type="range" id="propShadowBlur" class="input-range" min="0" max="30" value="0">
+
+              <div class="color-picker-row" style="margin-top: 8px;">
+                <span class="color-picker-label">Color Sombra</span>
+                <div class="color-picker-controls">
+                  <input type="text" id="propShadowColorHex" class="hex-color-input" value="#FFFFFF" maxlength="7" spellcheck="false">
+                  <input type="color" id="propShadowColor" class="color-input-clean" value="#ffffff">
+                </div>
+              </div>
+            </div>
+
+            <!-- Espaciado entre letras -->
+            <div class="slider-container">
+              <div class="slider-header">
+                <span class="slider-label">Espaciado de Letras</span>
+                <span id="propLetterSpacingVal" class="slider-val">0px</span>
+              </div>
+              <input type="range" id="propLetterSpacing" class="input-range" min="-4" max="24" value="0">
+            </div>
+
+            <!-- Caja Mayúsculas / Minúsculas -->
+            <div class="control-group">
+              <span class="group-title">Caja</span>
+              <select id="propTextTransform" class="input-select">
+                <option value="none">Normal</option>
+                <option value="uppercase">MAYÚSCULAS</option>
+                <option value="lowercase">minúsculas</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Edición de Formas -->
+          <div id="propGroupShape" class="control-group" style="display: none;">
+            <div class="color-picker-row">
+              <span class="color-picker-label">Color</span>
+              <div class="color-picker-controls">
+                <input type="text" id="propShapeColorHex" class="hex-color-input" value="#FA5C5C" maxlength="7" spellcheck="false">
+                <input type="color" id="propShapeColor" class="color-input-clean" value="#fa5c5c">
+              </div>
+            </div>
+          </div>
+
+          <!-- Edición de Imagen -->
+          <div id="propGroupImage" class="control-group" style="display: none;">
+            <div class="slider-container">
+              <div class="slider-header">
+                <span class="slider-label">Opacidad Imagen</span>
+                <span id="propOpacityVal" class="slider-val">100%</span>
+              </div>
+              <input type="range" id="propOpacity" class="input-range" min="0.1" max="1" step="0.05" value="1.0">
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Pestaña Fondo -->
+        <div id="tabBackground" class="tab-content">
+          <!-- Subir Fondo -->
+          <div class="control-group">
+            <span class="group-title">Imagen de Fondo</span>
+            <label class="file-upload-box">
+              <input type="file" id="bgImageUpload" accept="image/png, image/jpeg, image/webp">
+              <div class="file-upload-label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                <span>Subir Fondo</span>
+              </div>
+            </label>
+
+            <!-- Controles de Imagen de Fondo (Escala y Posición) -->
+            <div id="imageBgControlsWrapper" style="display: none; flex-direction: column; gap: 10px; margin-top: 8px;">
+              <div class="slider-container">
+                <div class="slider-header">
+                  <span class="slider-label">Escala</span>
+                  <span id="bgImgScaleVal" class="slider-val">100%</span>
+                </div>
+                <input type="range" id="bgImgScale" class="input-range" min="0.2" max="3" step="0.05" value="1.0">
+              </div>
+
+              <div class="slider-container">
+                <div class="slider-header">
+                  <span class="slider-label">Desplazar X</span>
+                </div>
+                <input type="range" id="bgImgOffsetX" class="input-range" min="-600" max="600" value="0">
+              </div>
+
+              <div class="slider-container">
+                <div class="slider-header">
+                  <span class="slider-label">Desplazar Y</span>
+                </div>
+                <input type="range" id="bgImgOffsetY" class="input-range" min="-600" max="600" value="0">
+              </div>
+
+              <button id="removeBgImageBtn" class="btn btn-secondary btn-sm" style="width: 100%;">Quitar Imagen</button>
+            </div>
+          </div>
+
+          <!-- Fundido Exterior a Color Plano (Fondo Itch.io) -->
+          <div class="control-group" style="background: var(--bg-card); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--itch-border-light);">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; cursor: pointer;">
+              <input type="checkbox" id="edgeFadeToggle">
+              <span>Fundido Exterior</span>
+            </label>
+            <div id="edgeFadeOptions" style="display: none; margin-top: 10px;">
+              <div class="color-picker-row" style="margin-bottom: 8px;">
+                <span class="color-picker-label">Color</span>
+                <div class="color-picker-controls">
+                  <input type="text" id="edgeFadeColorHex" class="hex-color-input" value="#F7C6C8" maxlength="7" spellcheck="false">
+                  <input type="color" id="edgeFadeColorInput" class="color-input-clean" value="#F7C6C8">
+                </div>
+              </div>
+              <div class="slider-container">
+                <div class="slider-header">
+                  <span class="slider-label">Ancho del Fundido</span>
+                  <span id="edgeFadeWidthVal" class="slider-val">140px</span>
+                </div>
+                <input type="range" id="edgeFadeWidth" class="input-range" min="40" max="400" value="140">
+              </div>
+            </div>
+          </div>
+
+          <!-- Controles de Patrón (Tablero Rosa) -->
+          <div id="patternControlsWrapper" class="control-group">
+            <div class="color-picker-row">
+              <span class="color-picker-label">Color de Fondo Base</span>
+              <div class="color-picker-controls">
+                <input type="text" id="bgColorHex" class="hex-color-input" value="#F7C6C8" maxlength="7" spellcheck="false">
+                <input type="color" id="bgColorInput" class="color-input-clean" value="#F7C6C8">
+              </div>
+            </div>
+
+            <div class="control-group">
+              <span class="group-title">Tipo de Patrón</span>
+              <select id="patternSelect" class="input-select">
+                <option value="none" style="font-weight: 800;">Sin Patrón</option>
+                <option value="checker" selected>Cuadrícula</option>
+                <option value="pixel_grid">Rejilla Píxel</option>
+                <option value="isometric">Rejilla Isométrica</option>
+                <option value="scanlines">Líneas CRT</option>
+                <option value="dots">Puntos</option>
+                <option value="stripes">Rayas</option>
+                <option value="bricks">Ladrillos</option>
+              </select>
+            </div>
+
+            <div id="patternPropsWrapper">
+              <div class="color-picker-row">
+                <span class="color-picker-label">Color del Patrón</span>
+                <div class="color-picker-controls">
+                  <input type="text" id="patternColorHex" class="hex-color-input" value="#EDBCBE" maxlength="7" spellcheck="false">
+                  <input type="color" id="patternColorInput" class="color-input-clean" value="#EDBCBE">
+                </div>
+              </div>
+
+              <div class="slider-container">
+                <div class="slider-header">
+                  <span class="slider-label">Tamaño del Patrón</span>
+                  <span id="patternScaleVal" class="slider-val">28px</span>
+                </div>
+                <input type="range" id="patternScale" class="input-range" min="8" max="96" value="28">
+              </div>
+
+              <div class="slider-container">
+                <div class="slider-header">
+                  <span class="slider-label">Opacidad</span>
+                  <span id="patternOpacityVal" class="slider-val">100%</span>
+                </div>
+                <input type="range" id="patternOpacity" class="input-range" min="0" max="1" step="0.05" value="1.0">
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Lienzo Principal con Soporte Drag & Drop y Espacio Libre -->
+      <section class="canvas-viewport">
+        <!-- Barra Flotante de Capa Seleccionada -->
+        <div id="canvasToolbar" class="canvas-toolbar">
+          <button id="toolAlignCenterX" class="btn btn-secondary btn-sm" title="Centrar Horizontalmente">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="2" x2="12" y2="22"></line><rect x="6" y="8" width="12" height="8" rx="1"></rect></svg>
+            <span>Centrar H</span>
+          </button>
+          <button id="toolAlignCenterY" class="btn btn-secondary btn-sm" title="Centrar Verticalmente">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="2" y1="12" x2="22" y2="12"></line><rect x="8" y="6" width="8" height="12" rx="1"></rect></svg>
+            <span>Centrar V</span>
+          </button>
+        </div>
+
+        <div class="canvas-wrapper">
+          <canvas id="mainCanvas"></canvas>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal: Crear Nuevo Lienzo / Pestaña -->
+  <div id="newCanvasModal" class="modal-overlay">
+    <div class="modal-new-canvas">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 15px; font-weight: 800; color: var(--itch-dark);">Nuevo Lienzo</span>
+        <button id="closeNewCanvasBtn" class="modal-close-btn">&times;</button>
+      </div>
+
+      <!-- Selector de Tipo Oficial Itch.io -->
+      <div class="new-canvas-grid">
+        <div class="new-canvas-option selected" data-new-type="cover">
+          <span class="new-canvas-option-title">Cover</span>
+          <span class="new-canvas-option-sub">630 × 500 px</span>
+        </div>
+        <div class="new-canvas-option" data-new-type="banner">
+          <span class="new-canvas-option-title">Banner</span>
+          <span class="new-canvas-option-sub">960 × 400 px</span>
+        </div>
+        <div class="new-canvas-option" data-new-type="landscape_16_9">
+          <span class="new-canvas-option-title">Landscape (16:9)</span>
+          <span class="new-canvas-option-sub">1920 × 1080 px · Estándar</span>
+        </div>
+        <div class="new-canvas-option" data-new-type="landscape_portal">
+          <span class="new-canvas-option-title">Landscape (9:16)</span>
+          <span class="new-canvas-option-sub">1080 × 1920 px · Opcional</span>
+        </div>
+        <div class="new-canvas-option" data-new-type="screenshot_4_3">
+          <span class="new-canvas-option-title">Landscape (4:3)</span>
+          <span class="new-canvas-option-sub">1440 × 1080 px · Opcional</span>
+        </div>
+        <div class="new-canvas-option" data-new-type="screenshot_1_1">
+          <span class="new-canvas-option-title">Landscape (1:1)</span>
+          <span class="new-canvas-option-sub">1080 × 1080 px · Opcional</span>
+        </div>
+        <div class="new-canvas-option" data-new-type="background" style="grid-column: 1 / -1;">
+          <span class="new-canvas-option-title">Background</span>
+          <span class="new-canvas-option-sub">1920 × 1080 px</span>
+        </div>
+      </div>
+
+      <!-- Selector de Nivel de Resolución (Recomendada, Intermedia, Máxima) -->
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <span class="group-title">Resolución</span>
+        <div id="newCanvasResTiers" class="resolution-tier-selector">
+          <button type="button" class="res-tier-btn selected" data-tier="recommended">Recomendada</button>
+          <button type="button" class="res-tier-btn" data-tier="intermediate">Intermedia</button>
+          <button type="button" class="res-tier-btn" data-tier="maximum">Máxima</button>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 8px; margin-top: 12px;">
+        <button id="createBlankBtn" class="btn btn-secondary" style="flex: 1;">Lienzo en blanco</button>
+        <button id="createCopyBtn" class="btn btn-primary" style="flex: 1;">Diseño actual</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Simulador de Vista Previa Itch.io (Cover y Banner) -->
+  <div id="mockupModal" class="modal-overlay">
+    <div class="modal-window">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>Vista Previa Itch.io</span>
+          <span id="mockupTitleBadge" class="modal-title-badge">Catálogo</span>
+        </div>
+        <button id="closeMockupBtn" class="modal-close-btn">&times;</button>
+      </div>
+
+      <!-- Vista 1: Catálogo Itch.io (Para Cover) -->
+      <div id="mockupCoverView" class="itch-feed-viewport">
+        <div class="itch-browse-header">
+          <span class="itch-browse-title">Juegos Destacados</span>
+          <span class="itch-browse-sub">Simulación directa del catálogo</span>
+        </div>
+
+        <div class="itch-grid">
+          <div class="itch-card highlight">
+            <img id="userMockupImg" class="itch-card-thumb" alt="Tu Portada">
+            <div class="itch-card-body">
+              <div id="userMockupTitle" class="itch-card-title">Tu Juego</div>
+              <div class="itch-card-sub">Por ti</div>
+              <div class="itch-card-tags">
+                <span class="itch-card-tag">Indie</span>
+                <span class="itch-card-tag">Gratis</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="itch-card">
+            <div class="itch-card-thumb" style="background-color: #f7c6c8; display: flex; align-items: center; justify-content: center; color: #222222; font-weight: 800;">Dungeon Quest</div>
+            <div class="itch-card-body">
+              <div class="itch-card-title">Dungeon Quest</div>
+              <div class="itch-card-sub">Pixel Studio</div>
+              <div class="itch-card-tags">
+                <span class="itch-card-tag">Indie</span>
+                <span class="itch-card-tag">Gratis</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="itch-card">
+            <div class="itch-card-thumb" style="background-color: #edbcbe; display: flex; align-items: center; justify-content: center; color: #222222; font-weight: 800;">Cyber Strike</div>
+            <div class="itch-card-body">
+              <div class="itch-card-title">Cyber Strike</div>
+              <div class="itch-card-sub">Neon Games</div>
+              <div class="itch-card-tags">
+                <span class="itch-card-tag">Indie</span>
+                <span class="itch-card-tag">Gratis</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista 2: Cabecera Oficial de Juego Itch.io (Para Banner) -->
+      <div id="mockupBannerView" class="itch-banner-viewport" style="display: none;">
+        <div class="itch-banner-container">
+          <img id="userBannerMockupImg" class="itch-banner-img" alt="Tu Banner">
+        </div>
+
+        <div class="itch-banner-game-bar">
+          <div>
+            <div id="userBannerMockupTitle" class="itch-banner-game-title">Tu Juego</div>
+            <div class="itch-banner-game-author">Un juego por ti</div>
+          </div>
+          <button class="btn btn-primary btn-sm" style="pointer-events: none; padding: 6px 18px; font-weight: 800;">Descargar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Selector Google Fonts (Estilo Itch.io) -->
+  <div id="fontSelectModal" class="modal-overlay" style="display: none;">
+    <div class="modal-font-select">
+      <div class="font-modal-header">
+        <h3 class="font-modal-title">Select a font</h3>
+        <button id="btnCloseFontModal" class="font-modal-close" title="Cerrar">✕</button>
+      </div>
+      <p class="font-modal-desc">Explora más de 1.900 fuentes libres de Google Fonts.</p>
+      <div class="font-modal-controls">
+        <input type="text" id="modalFontSearch" class="font-modal-search" placeholder="Search for font by name..." autocomplete="off">
+        <select id="modalFontCategory" class="font-modal-category">
+          <option value="all">All fonts</option>
+          <option value="sans-serif">sans-serif</option>
+          <option value="serif">serif</option>
+          <option value="display">display</option>
+          <option value="handwriting">handwriting</option>
+          <option value="monospace">monospace</option>
+        </select>
+      </div>
+      <div id="modalFontList" class="font-modal-list-box">
+        <!-- Renderizado dinámico de fuentes -->
+      </div>
+      <div class="font-modal-footer-note">
+        <span>Can't find what you're looking for? Add any font with Google Fonts catalog.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menú Contextual (Clic Derecho en Capas del Lienzo) -->
+  <div id="canvasContextMenu" class="canvas-context-menu" style="display: none;">
+    <button type="button" class="context-menu-item" data-action="duplicate">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+      <span>Duplicar</span>
+      <span class="context-menu-shortcut">Ctrl+D</span>
+    </button>
+    <button type="button" class="context-menu-item" data-action="edit">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+      <span style="font-weight: 800;">Editar</span>
+    </button>
+    <button type="button" class="context-menu-item" data-action="group" id="ctxMenuGroupBtn" style="display: none;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      <span>Agrupar</span>
+      <span class="context-menu-shortcut">Ctrl+G</span>
+    </button>
+    <button type="button" class="context-menu-item" data-action="ungroup" id="ctxMenuUngroupBtn" style="display: none;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" stroke-dasharray="2 2"></rect><rect x="14" y="14" width="7" height="7" stroke-dasharray="2 2"></rect></svg>
+      <span>Desagrupar</span>
+      <span class="context-menu-shortcut">Ctrl+Shift+G</span>
+    </button>
+    <div class="context-menu-separator"></div>
+    <button type="button" class="context-menu-item" data-action="bringFront">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline><line x1="6" y1="5" x2="18" y2="5"></line></svg>
+      <span>Traer al frente</span>
+    </button>
+    <button type="button" class="context-menu-item" data-action="layerUp">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>
+      <span>Subir una capa</span>
+    </button>
+    <button type="button" class="context-menu-item" data-action="layerDown">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      <span>Bajar una capa</span>
+    </button>
+    <button type="button" class="context-menu-item" data-action="sendBack">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline><line x1="6" y1="19" x2="18" y2="19"></line></svg>
+      <span>Enviar al fondo</span>
+    </button>
+    <div class="context-menu-separator"></div>
+    <button type="button" class="context-menu-item danger" data-action="delete">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+      <span>Eliminar</span>
+      <span class="context-menu-shortcut">Supr</span>
+    </button>
+  </div>
+
+  <!-- Notificación Toast -->
+  <div id="toastNotification" style="display: none; position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background-color: var(--itch-red); color: #ffffff; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; z-index: 200; box-shadow: var(--shadow-md);">
+    Acción realizada
+  </div>
+
+  <!-- JavaScript Modular -->
+  <script type="module" src="src/js/app.js?v=3.3"></script>
+</body>
+</html>

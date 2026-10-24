@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medidas Itch.io | EternoDev</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <style>
+    body {
+      padding: 32px;
+      overflow-y: auto;
+      max-width: 860px;
+      margin: 0 auto;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--comic-yellow);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 900;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      color: var(--comic-yellow);
+    }
+    .spec-card {
+      background-color: var(--bg-card);
+      border: var(--border-thick);
+      box-shadow: var(--shadow-comic);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .spec-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--comic-cyan);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .spec-dim {
+      color: var(--comic-yellow);
+      font-family: var(--font-mono);
+      font-weight: 900;
+    }
+    .spec-desc {
+      font-size: 13px;
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+    .badge {
+      display: inline-block;
+      background-color: var(--comic-red);
+      color: #ffffff;
+      border: 1px solid #000;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 800;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <a href="../../index.html" class="back-link">&larr; Volver al Editor</a>
+  <h1>Dimensiones Oficiales de Itch.io</h1>
+
+  <div class="spec-card">
+    <div class="spec-title">
+      <span>1. Cover Image (Portada)</span>
+      <span class="spec-dim">630 × 500 px</span>
+    </div>
+    <div class="spec-desc">
+      Tamaño recomendado para portadas de juegos. Se utiliza en el catálogo principal de itch.io, página de inicio, perfiles, panel de control y widgets de iframe.
+    </div>
+    <span class="badge">Recomendado Oficial</span>
+  </div>
+
+  <div class="spec-card">
+    <div class="spec-title">
+      <span>2. Game Page Banner</span>
+      <span class="spec-dim">960 × 400 px</span>
+    </div>
+    <div class="spec-desc">
+      Ancho máximo del banner en la página de un juego (960px). La altura recomendada es entre 200 y 400px para mantener el contenido visible en la mayoría de pantallas.
+    </div>
+    <span class="badge">Cabecera de Página</span>
+  </div>
+
+  <div class="spec-card">
+    <div class="spec-title">
+      <span>3. Landscape Screenshot (Capturas)</span>
+      <span class="spec-dim">1920 × 1080 px (16:9)</span>
+    </div>
+    <div class="spec-desc">
+      Capturas de pantalla en formato panorámico (16:9 widescreen a 1080p). Se muestran en la barra lateral a 347px de ancho y en overlay a resolución completa al hacer clic.
+      Variantes soportadas: 4:3 (1200x900px), 3:4 (900x1200px) y 1:1.
+    </div>
+    <span class="badge">Capturas y Carrusel</span>
+  </div>
+
+  <div class="spec-card">
+    <div class="spec-title">
+      <span>4. Background (Fondo)</span>
+      <span class="spec-dim">1920 × 1080 px</span>
+    </div>
+    <div class="spec-desc">
+      Fondo de la página del juego o del perfil. Debe ser un patrón repetitivo continuo (seamless pattern) con resolución Full HD para abarcar monitores panorámicos.
+    </div>
+    <span class="badge">Patrón Repetitivo</span>
+  </div>
+</body>
+</html>

@@ -1,0 +1,231 @@
+/* Modal Vista Previa Itch.io - TEMA LIMPIO BLANCO & ROSA (Estilo Oficial ItchLab) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 15, 15, 0.65);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-window {
+  background-color: #ffffff;
+  border: 1px solid var(--itch-border);
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-md);
+  width: 940px;
+  max-width: 95vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--itch-dark);
+}
+
+.modal-header {
+  padding: 12px 18px;
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--itch-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--itch-dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-title-badge {
+  background-color: var(--itch-red);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modal-close-btn {
+  background: transparent;
+  color: var(--itch-muted);
+  border: none;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.12s, color 0.12s;
+}
+
+.modal-close-btn:hover {
+  background-color: #fde8e8;
+  color: var(--itch-red);
+}
+
+/* Itch.io Feed Grid Simulator */
+.itch-feed-viewport {
+  padding: 24px;
+  overflow-y: auto;
+  background-color: #faf8f8;
+}
+
+.itch-browse-header {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--itch-border-light);
+  padding-bottom: 10px;
+}
+
+.itch-browse-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--itch-dark);
+}
+
+.itch-browse-sub {
+  font-size: 12px;
+  color: var(--itch-muted);
+}
+
+.itch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* Single Itch Game Card */
+.itch-card {
+  background-color: #ffffff;
+  border: 1px solid var(--itch-border-light);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.itch-card:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.itch-card.highlight {
+  border: 2px solid var(--itch-red);
+  background-color: #fff9f9;
+}
+
+.itch-card-thumb {
+  width: 100%;
+  aspect-ratio: 630 / 500;
+  background-color: #f2eded;
+  object-fit: cover;
+  display: block;
+}
+
+.itch-card-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.itch-card-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--itch-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itch-card-sub {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--itch-muted);
+}
+
+.itch-card-tags {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.itch-card-tag {
+  font-size: 11px;
+  font-weight: 700;
+  background-color: #f0ebeb;
+  color: #555555;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.itch-card.highlight .itch-card-tag {
+  background-color: #fde8e8;
+  color: var(--itch-red);
+}
+
+/* Itch.io Game Page Banner Simulator */
+.itch-banner-viewport {
+  padding: 0;
+  background-color: #faf8f8;
+  overflow-y: auto;
+}
+
+.itch-banner-container {
+  position: relative;
+  width: 100%;
+  background-color: #f5f0f0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.itch-banner-img {
+  width: 100%;
+  height: auto;
+  max-height: 480px;
+  object-fit: contain;
+  display: block;
+}
+
+.itch-banner-game-bar {
+  padding: 18px 24px;
+  background-color: #ffffff;
+  border-top: 1px solid var(--itch-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.itch-banner-game-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--itch-dark);
+}
+
+.itch-banner-game-author {
+  font-size: 12px;
+  color: var(--itch-muted);
+  margin-top: 2px;
+}

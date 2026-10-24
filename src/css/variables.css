@@ -1,0 +1,48 @@
+:root {
+  /* EternoDev Itch.io Theme - Blancos, Rosados y Colores Planos (CERO DEGRADADOS) */
+  --bg-main: #ebebeb;
+  --bg-surface: #ffffff;
+  --bg-card: #f8f9fa;
+  --bg-hover: #f1f2f5;
+  --bg-active: #e9ecef;
+
+  /* Colores Oficiales Itch.io */
+  --itch-red: #fa5c5c;
+  --itch-red-hover: #e54848;
+  --itch-pink: #f7c6c8;
+  --itch-pink-dark: #edbcbe;
+  --itch-dark: #222222;
+  --itch-text: #333333;
+  --itch-muted: #777777;
+  --itch-border: #dadada;
+  --itch-border-light: #e8e8e8;
+
+  /* Tipografía */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-title: 'Rubik', sans-serif;
+  --font-mono: "Fira Code", monospace;
+
+  /* Bordes y Sombras limpias */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-canvas: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--itch-text);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  user-select: none;
+}
