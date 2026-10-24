@@ -1,8 +1,23 @@
-import { ITCH_TYPES, GOOGLE_FONTS, createScene } from './presets.js?v=3.6';
-import { ProjectStorage } from './storage.js?v=3.6';
-import { CanvasEngine } from './canvas.js?v=3.6';
-import { downloadCanvas, copyCanvasToClipboard, exportItchProject, downloadAllScenesZip, downloadOfficialTemplatesZip } from './exporter.js?v=3.6';
-import { setupMockup } from './mockup.js?v=3.6';
+import { ITCH_TYPES, GOOGLE_FONTS, createScene } from './presets.js?v=3.7';
+import { ProjectStorage } from './storage.js?v=3.7';
+import { CanvasEngine } from './canvas.js?v=3.7';
+import { downloadCanvas, copyCanvasToClipboard, exportItchProject, downloadAllScenesZip, downloadOfficialTemplatesZip } from './exporter.js?v=3.7';
+import { setupMockup } from './mockup.js?v=3.7';
+
+// 0. GESTOR GLOBAL DE FUENTES (Ámbito de módulo para evitar TDZ en cualquier momento)
+const loadedGoogleFonts = new Set();
+function loadGoogleFont(fontFamily) {
+  if (!fontFamily || loadedGoogleFonts.has(fontFamily)) return Promise.resolve();
+  loadedGoogleFonts.add(fontFamily);
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(fontFamily)}:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap`;
+  document.head.appendChild(link);
+  if (document.fonts && document.fonts.load) {
+    return document.fonts.load(`16px "${fontFamily}"`).catch(() => {});
+  }
+  return Promise.resolve();
+}
 
 async function initApp() {
   const canvas = document.getElementById('mainCanvas');
@@ -21,6 +36,17 @@ async function initApp() {
   const homeImportItchFile = document.getElementById('homeImportItchFile');
   const savedProjectsGrid = document.getElementById('savedProjectsGrid');
 
+  // Notificación Toast accesible en toda la función
+  const toast = document.getElementById('toastNotification');
+  function showToast(text) {
+    if (!toast) return;
+    toast.textContent = text;
+    toast.style.display = 'block';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 1800);
+  }
+
   // Floating toolbar
   const canvasToolbar = document.getElementById('canvasToolbar');
   const toolLayerUp = document.getElementById('toolLayerUp');
@@ -28,44 +54,54 @@ async function initApp() {
   const toolLayerDel = document.getElementById('toolLayerDel');
 
   // 1. CARGA O INICIALIZACIÓN DE PROYECTOS LOCALES (IndexedDB Persistente)
-  await ProjectStorage.init();
-  let allProjects = ProjectStorage.getAllProjects();
+  let engine = null;
+  let allProjects = [];
+  try {
+    allProjects = await ProjectStorage.init();
+  } catch (e) {
+    console.error('Error inicializando ProjectStorage:', e);
+  }
+
   let currentProject = null;
   let scenesList = [];
   let activeSceneIndex = 0;
 
   function restoreProjectImages(proj) {
     if (!proj || !proj.scenesList) return;
-    proj.scenesList.forEach(scene => {
-      if (scene.bgImageSrc && !scene.bgImage) {
-        const bgImg = new Image();
-        bgImg.onload = () => {
-          if (getActiveScene() === scene) engine.render();
-        };
-        bgImg.src = scene.bgImageSrc;
-        scene.bgImage = bgImg;
-      }
-      if (scene.layers) {
-        scene.layers.forEach(layer => {
-          if (layer.type === 'image' && layer.src && !layer.img) {
-            const lImg = new Image();
-            lImg.onload = () => {
-              if (getActiveScene() === scene) engine.render();
-            };
-            lImg.src = layer.src;
-            layer.img = lImg;
-          }
-          if (layer.type === 'text' && layer.fontFamily) {
-            loadGoogleFont(layer.fontFamily).then(() => {
-              if (getActiveScene() === scene) engine.render();
-            });
-          }
-        });
-      }
-    });
+    try {
+      proj.scenesList.forEach(scene => {
+        if (scene.bgImageSrc && !scene.bgImage) {
+          const bgImg = new Image();
+          bgImg.onload = () => {
+            if (engine && getActiveScene() === scene) engine.render();
+          };
+          bgImg.src = scene.bgImageSrc;
+          scene.bgImage = bgImg;
+        }
+        if (scene.layers) {
+          scene.layers.forEach(layer => {
+            if (layer.type === 'image' && layer.src && !layer.img) {
+              const lImg = new Image();
+              lImg.onload = () => {
+                if (engine && getActiveScene() === scene) engine.render();
+              };
+              lImg.src = layer.src;
+              layer.img = lImg;
+            }
+            if (layer.type === 'text' && layer.fontFamily) {
+              loadGoogleFont(layer.fontFamily).then(() => {
+                if (engine && getActiveScene() === scene) engine.render();
+              }).catch(() => {});
+            }
+          });
+        }
+      });
+    } catch (err) {
+      console.warn('Error restaurando recursos de proyecto:', err);
+    }
   }
 
-  if (allProjects.length > 0) {
+  if (allProjects && allProjects.length > 0) {
     currentProject = allProjects[0];
     currentProject.isSaved = true;
     scenesList = currentProject.scenesList;
@@ -245,7 +281,7 @@ async function initApp() {
     pushHistory();
   }
 
-  const engine = new CanvasEngine(canvas, onEngineChange, onEngineActionCommit);
+  engine = new CanvasEngine(canvas, onEngineChange, onEngineActionCommit);
   engine.setState(getActiveScene());
   pushHistory();
 
@@ -1419,19 +1455,6 @@ async function initApp() {
   });
 
   // 11.5 CATÁLOGO COMPLETO DE GOOGLE FONTS (Estilo oficial de Itch.io)
-  const loadedGoogleFonts = new Set();
-  function loadGoogleFont(fontFamily) {
-    if (!fontFamily || loadedGoogleFonts.has(fontFamily)) return Promise.resolve();
-    loadedGoogleFonts.add(fontFamily);
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(fontFamily)}:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap`;
-    document.head.appendChild(link);
-    if (document.fonts && document.fonts.load) {
-      return document.fonts.load(`16px "${fontFamily}"`).catch(() => {});
-    }
-    return Promise.resolve();
-  }
 
   let fullGoogleFontsCatalog = [];
   let displayedFontCount = 60;
@@ -1887,17 +1910,7 @@ async function initApp() {
   const downloadPngBtn = document.getElementById('downloadPngBtn');
   const downloadZipBtn = document.getElementById('downloadZipBtn');
   const downloadItchBtn = document.getElementById('downloadItchBtn');
-  const copyBtn = document.getElementById('copyBtn');
-  const toast = document.getElementById('toastNotification');
 
-  function showToast(text) {
-    if (!toast) return;
-    toast.textContent = text;
-    toast.style.display = 'block';
-    setTimeout(() => {
-      toast.style.display = 'none';
-    }, 1800);
-  }
 
   downloadBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
