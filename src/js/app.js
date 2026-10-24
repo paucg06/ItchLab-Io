@@ -1,8 +1,8 @@
-import { ITCH_TYPES, GOOGLE_FONTS, createScene } from './presets.js';
-import { ProjectStorage } from './storage.js';
-import { CanvasEngine } from './canvas.js';
-import { downloadCanvas, copyCanvasToClipboard, exportItchProject, downloadAllScenesZip, downloadOfficialTemplatesZip } from './exporter.js';
-import { setupMockup } from './mockup.js';
+import { ITCH_TYPES, GOOGLE_FONTS, createScene } from './presets.js?v=3.4';
+import { ProjectStorage } from './storage.js?v=3.4';
+import { CanvasEngine } from './canvas.js?v=3.4';
+import { downloadCanvas, copyCanvasToClipboard, exportItchProject, downloadAllScenesZip, downloadOfficialTemplatesZip } from './exporter.js?v=3.4';
+import { setupMockup } from './mockup.js?v=3.4';
 
 function initApp() {
   const canvas = document.getElementById('mainCanvas');
@@ -334,39 +334,67 @@ function initApp() {
 
   // Descargar Plantillas Oficiales ZIP desde Home
   homeDownloadTemplatesBtn?.addEventListener('click', async () => {
-    showToast('Generando plantillas en 4 carpetas...');
-    await downloadOfficialTemplatesZip(createScene);
-    showToast('Plantillas descargadas');
+    try {
+      showToast('Generando plantillas en 4 carpetas...');
+      await downloadOfficialTemplatesZip(createScene);
+      showToast('Plantillas descargadas');
+    } catch (err) {
+      console.error('Error al descargar plantillas:', err);
+      alert('Error al generar el archivo .zip de medidas.');
+    }
   });
 
   // Importar archivo .itch desde Home
   homeImportItchFile?.addEventListener('change', (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        try {
-          const parsed = JSON.parse(event.target.result);
-          if (parsed.scenesList && parsed.scenesList.length > 0) {
-            const fileNameClean = file.name.replace(/\.itch$|\.json$/i, '');
-            const newProj = {
-              id: 'proj_' + Date.now(),
-              name: fileNameClean || 'Proyecto Importado',
-              updatedAt: Date.now(),
-              scenesList: parsed.scenesList,
-              activeSceneIndex: parsed.activeSceneIndex || 0
-            };
-            ProjectStorage.saveProject(newProj);
-            loadProject(newProj);
-            showToast('Proyecto cargado');
-          }
-        } catch (err) {
-          alert('Archivo .itch no válido');
-        }
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      let parsed;
+      try {
+        parsed = JSON.parse(event.target.result);
+      } catch (err) {
+        alert('Archivo .itch no válido (formato JSON no legible).');
+        return;
+      }
+
+      let scenes = null;
+      if (Array.isArray(parsed)) {
+        scenes = parsed;
+      } else if (Array.isArray(parsed.scenesList)) {
+        scenes = parsed.scenesList;
+      } else if (Array.isArray(parsed.scenes)) {
+        scenes = parsed.scenes;
+      } else if (parsed.layers) {
+        scenes = [parsed];
+      }
+
+      if (!scenes || scenes.length === 0) {
+        alert('El archivo .itch no contiene lienzos reconocibles.');
+        return;
+      }
+
+      const fileNameClean = file.name.replace(/\.itch$|\.json$/i, '');
+      const newProj = {
+        id: 'proj_' + Date.now(),
+        name: parsed.name || fileNameClean || 'Proyecto Importado',
+        updatedAt: Date.now(),
+        scenesList: scenes,
+        activeSceneIndex: (parsed.activeSceneIndex >= 0 && parsed.activeSceneIndex < scenes.length) ? parsed.activeSceneIndex : 0,
+        isSaved: true
       };
-      reader.readAsText(file);
-      homeImportItchFile.value = '';
-    }
+
+      try {
+        ProjectStorage.saveProject(newProj);
+        loadProject(newProj);
+        showToast('Proyecto cargado');
+      } catch (err) {
+        console.error('Error al cargar proyecto importado:', err);
+      }
+    };
+    reader.readAsText(file);
+    homeImportItchFile.value = '';
   });
 
   // Renderizar proyectos guardados en Home (Estilo itch.io Game Card)
@@ -1254,15 +1282,6 @@ function initApp() {
       }
     }
   }
-
-  propText?.addEventListener('input', (e) => {
-    const layer = engine.getSelectedLayer();
-    if (layer && layer.type === 'text') {
-      layer.text = e.target.value;
-      engine.render();
-      updateLayerListUI();
-    }
-  });
 
   propSize?.addEventListener('input', (e) => {
     const layer = engine.getSelectedLayer();
