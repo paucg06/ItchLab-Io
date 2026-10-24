@@ -160,35 +160,10 @@ export function createScene(typeKey = 'cover', customTitle = null, copyFromScene
   const title = customTitle || meta.name;
 
   let layers = [];
-
-  if (copyFromScene && copyFromScene.layers && copyFromScene.layers.length > 0) {
-    const scaleX = width / copyFromScene.width;
-    const scaleY = height / copyFromScene.height;
-
-    layers = copyFromScene.layers.map(l => {
-      const cloned = JSON.parse(JSON.stringify(l));
-      cloned.id = 'layer_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
-      cloned.x = Math.round(cloned.x * scaleX);
-      cloned.y = Math.round(cloned.y * scaleY);
-      if (cloned.width) cloned.width = Math.round(cloned.width * scaleX);
-      if (cloned.height) cloned.height = Math.round(cloned.height * scaleY);
-      if (cloned.fontSize) cloned.fontSize = Math.max(12, Math.round(cloned.fontSize * Math.min(scaleX, scaleY)));
-      cloned.img = l.img || null;
-      return cloned;
-    });
-  }
-
-  return {
-    id,
-    typeKey: actualKey,
-    category: meta.category || actualKey,
-    resTier,
-    title,
-    width,
-    height,
-    // Fondo por defecto Tablero Rosa (#F7C6C8 y #EDBCBE)
+  let bgSettings = {
     bgMode: 'pattern',
-    bgImage: copyFromScene && copyFromScene.bgImage ? copyFromScene.bgImage : null,
+    bgImage: null,
+    bgImageSrc: null,
     bgColor: '#F7C6C8',
     pattern: 'checker',
     patternColor: '#EDBCBE',
@@ -199,7 +174,92 @@ export function createScene(typeKey = 'cover', customTitle = null, copyFromScene
     bgImgOffsetY: 0,
     edgeFade: false,
     edgeFadeColor: '#F7C6C8',
-    edgeFadeWidth: Math.round(140 * (width / 630)),
+    edgeFadeWidth: Math.round(140 * (width / 630))
+  };
+
+  if (copyFromScene) {
+    const origW = copyFromScene.width || 630;
+    const origH = copyFromScene.height || 500;
+    // Escala uniforme para preservar al 100% la relación de aspecto sin deformaciones
+    const uniformScale = Math.min(width / origW, height / origH);
+
+    const origCenterX = origW / 2;
+    const origCenterY = origH / 2;
+    const newCenterX = width / 2;
+    const newCenterY = height / 2;
+
+    if (copyFromScene.layers && copyFromScene.layers.length > 0) {
+      layers = copyFromScene.layers.map(l => {
+        const cloned = JSON.parse(JSON.stringify(l));
+        cloned.id = 'layer_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+        cloned.img = l.img || null;
+
+        if (cloned.type === 'text') {
+          const dx = l.x - origCenterX;
+          const dy = l.y - origCenterY;
+          cloned.x = Math.round(newCenterX + dx * uniformScale);
+          cloned.y = Math.round(newCenterY + dy * uniformScale);
+          if (cloned.fontSize) {
+            cloned.fontSize = Math.max(14, Math.round(l.fontSize * uniformScale));
+          }
+        } else {
+          // Para imágenes, figuras y grupos: preservar estrictamente ancho, alto y proporción
+          const origLayerW = l.width || 100;
+          const origLayerH = l.height || 100;
+          const layerCenterX = l.x + origLayerW / 2;
+          const layerCenterY = l.y + origLayerH / 2;
+          const dx = layerCenterX - origCenterX;
+          const dy = layerCenterY - origCenterY;
+
+          cloned.width = Math.round(origLayerW * uniformScale);
+          cloned.height = Math.round(origLayerH * uniformScale);
+          const newLayerCenterX = newCenterX + dx * uniformScale;
+          const newLayerCenterY = newCenterY + dy * uniformScale;
+          cloned.x = Math.round(newLayerCenterX - cloned.width / 2);
+          cloned.y = Math.round(newLayerCenterY - cloned.height / 2);
+
+          if (Array.isArray(cloned.children)) {
+            cloned.children.forEach(child => {
+              child.x = Math.round((child.x || 0) * uniformScale);
+              child.y = Math.round((child.y || 0) * uniformScale);
+              if (child.width) child.width = Math.round(child.width * uniformScale);
+              if (child.height) child.height = Math.round(child.height * uniformScale);
+              if (child.fontSize) child.fontSize = Math.max(12, Math.round(child.fontSize * uniformScale));
+            });
+          }
+        }
+        return cloned;
+      });
+    }
+
+    // Copiar también toda la estética de fondo del lienzo de origen
+    bgSettings = {
+      bgMode: copyFromScene.bgMode || 'pattern',
+      bgImage: copyFromScene.bgImage || null,
+      bgImageSrc: copyFromScene.bgImageSrc || null,
+      bgColor: copyFromScene.bgColor || '#F7C6C8',
+      pattern: copyFromScene.pattern !== undefined ? copyFromScene.pattern : 'checker',
+      patternColor: copyFromScene.patternColor || '#EDBCBE',
+      patternScale: copyFromScene.patternScale ? Math.round(copyFromScene.patternScale * uniformScale) : Math.round(28 * (width / 630)),
+      patternOpacity: copyFromScene.patternOpacity !== undefined ? copyFromScene.patternOpacity : 1.0,
+      bgImgScale: copyFromScene.bgImgScale !== undefined ? copyFromScene.bgImgScale : 1.0,
+      bgImgOffsetX: copyFromScene.bgImgOffsetX || 0,
+      bgImgOffsetY: copyFromScene.bgImgOffsetY || 0,
+      edgeFade: !!copyFromScene.edgeFade,
+      edgeFadeColor: copyFromScene.edgeFadeColor || '#F7C6C8',
+      edgeFadeWidth: copyFromScene.edgeFadeWidth ? Math.round(copyFromScene.edgeFadeWidth * uniformScale) : Math.round(140 * (width / 630))
+    };
+  }
+
+  return {
+    id,
+    typeKey: actualKey,
+    category: meta.category || actualKey,
+    resTier,
+    title,
+    width,
+    height,
+    ...bgSettings,
     layers,
     selectedLayerId: null
   };

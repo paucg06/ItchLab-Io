@@ -1,10 +1,10 @@
-import { ITCH_TYPES, GOOGLE_FONTS, createScene } from './presets.js?v=3.4';
-import { ProjectStorage } from './storage.js?v=3.4';
-import { CanvasEngine } from './canvas.js?v=3.4';
-import { downloadCanvas, copyCanvasToClipboard, exportItchProject, downloadAllScenesZip, downloadOfficialTemplatesZip } from './exporter.js?v=3.4';
-import { setupMockup } from './mockup.js?v=3.4';
+import { ITCH_TYPES, GOOGLE_FONTS, createScene } from './presets.js?v=3.5';
+import { ProjectStorage } from './storage.js?v=3.5';
+import { CanvasEngine } from './canvas.js?v=3.5';
+import { downloadCanvas, copyCanvasToClipboard, exportItchProject, downloadAllScenesZip, downloadOfficialTemplatesZip } from './exporter.js?v=3.5';
+import { setupMockup } from './mockup.js?v=3.5';
 
-function initApp() {
+async function initApp() {
   const canvas = document.getElementById('mainCanvas');
   const canvasDimLabel = document.getElementById('canvasDimensions');
   const layerListContainer = document.getElementById('layerList');
@@ -27,7 +27,8 @@ function initApp() {
   const toolLayerDown = document.getElementById('toolLayerDown');
   const toolLayerDel = document.getElementById('toolLayerDel');
 
-  // 1. CARGA O INICIALIZACIÓN DE PROYECTOS LOCALES
+  // 1. CARGA O INICIALIZACIÓN DE PROYECTOS LOCALES (IndexedDB Persistente)
+  await ProjectStorage.init();
   let allProjects = ProjectStorage.getAllProjects();
   let currentProject = null;
   let scenesList = [];
@@ -121,6 +122,13 @@ function initApp() {
 
     ProjectStorage.saveProject(currentProject);
   }
+
+  window.addEventListener('beforeunload', () => {
+    saveCurrentProject();
+  });
+  window.addEventListener('pagehide', () => {
+    saveCurrentProject();
+  });
 
   // 2. SISTEMA DE HISTORIAL ROBUSTO (UNDO / REDO)
   let history = [];
