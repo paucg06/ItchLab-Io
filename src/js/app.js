@@ -1,8 +1,8 @@
-import { ITCH_TYPES, GOOGLE_FONTS, createScene } from './presets.js?v=3.5';
-import { ProjectStorage } from './storage.js?v=3.5';
-import { CanvasEngine } from './canvas.js?v=3.5';
-import { downloadCanvas, copyCanvasToClipboard, exportItchProject, downloadAllScenesZip, downloadOfficialTemplatesZip } from './exporter.js?v=3.5';
-import { setupMockup } from './mockup.js?v=3.5';
+import { ITCH_TYPES, GOOGLE_FONTS, createScene } from './presets.js?v=3.6';
+import { ProjectStorage } from './storage.js?v=3.6';
+import { CanvasEngine } from './canvas.js?v=3.6';
+import { downloadCanvas, copyCanvasToClipboard, exportItchProject, downloadAllScenesZip, downloadOfficialTemplatesZip } from './exporter.js?v=3.6';
+import { setupMockup } from './mockup.js?v=3.6';
 
 async function initApp() {
   const canvas = document.getElementById('mainCanvas');
@@ -1167,6 +1167,9 @@ async function initApp() {
   const propLetterSpacing = document.getElementById('propLetterSpacing');
   const propLetterSpacingVal = document.getElementById('propLetterSpacingVal');
   const propTextTransform = document.getElementById('propTextTransform');
+  const propTextContent = document.getElementById('propTextContent');
+  const propTextCurve = document.getElementById('propTextCurve');
+  const propTextCurveVal = document.getElementById('propTextCurveVal');
 
   const propOpacity = document.getElementById('propOpacity');
   const propOpacityVal = document.getElementById('propOpacityVal');
@@ -1262,6 +1265,9 @@ async function initApp() {
       if (propLetterSpacing) propLetterSpacing.value = layer.letterSpacing || 0;
       if (propLetterSpacingVal) propLetterSpacingVal.textContent = `${layer.letterSpacing || 0}px`;
       if (propTextTransform) propTextTransform.value = layer.textTransform || 'none';
+      if (propTextContent) propTextContent.value = layer.text || '';
+      if (propTextCurve) propTextCurve.value = layer.curve || 0;
+      if (propTextCurveVal) propTextCurveVal.textContent = `${layer.curve || 0}%`;
 
     } else if (layer.type === 'shape') {
       if (propGroupText) propGroupText.style.display = 'none';
@@ -1375,6 +1381,32 @@ async function initApp() {
       layer.textTransform = e.target.value;
       engine.render();
     }
+  });
+
+  propTextContent?.addEventListener('input', (e) => {
+    const layer = engine.getSelectedLayer();
+    if (layer && layer.type === 'text') {
+      layer.text = e.target.value;
+      engine.render();
+      updateLayerListUI();
+    }
+  });
+
+  propTextContent?.addEventListener('change', () => {
+    pushHistory();
+  });
+
+  propTextCurve?.addEventListener('input', (e) => {
+    const layer = engine.getSelectedLayer();
+    if (layer && layer.type === 'text') {
+      layer.curve = parseInt(e.target.value, 10);
+      if (propTextCurveVal) propTextCurveVal.textContent = `${layer.curve}%`;
+      engine.render();
+    }
+  });
+
+  propTextCurve?.addEventListener('change', () => {
+    pushHistory();
   });
 
   propOpacity?.addEventListener('input', (e) => {
@@ -1626,6 +1658,8 @@ async function initApp() {
     engine.render();
   });
 
+  const bgColorWrapper = document.getElementById('bgColorWrapper');
+
   function updateBgModeUI() {
     const cur = getActiveScene();
     if (cur.bgMode === 'image' && cur.bgImage) {
@@ -1636,6 +1670,16 @@ async function initApp() {
       if (bgModePatternRadio) bgModePatternRadio.checked = true;
       if (patternControlsWrapper) patternControlsWrapper.style.display = 'flex';
       if (imageBgControlsWrapper) imageBgControlsWrapper.style.display = 'none';
+    }
+
+    if (cur.pattern === 'transparent') {
+      if (bgColorWrapper) bgColorWrapper.style.display = 'none';
+      if (patternPropsWrapper) patternPropsWrapper.style.display = 'none';
+    } else {
+      if (bgColorWrapper) bgColorWrapper.style.display = 'block';
+      if (patternPropsWrapper) {
+        patternPropsWrapper.style.display = (cur.pattern === 'none') ? 'none' : 'block';
+      }
     }
 
     if (bgImgScale) bgImgScale.value = cur.bgImgScale !== undefined ? cur.bgImgScale : 1.0;
@@ -1717,9 +1761,7 @@ async function initApp() {
   patternSelect?.addEventListener('change', (e) => {
     pushHistory();
     getActiveScene().pattern = e.target.value;
-    if (patternPropsWrapper) {
-      patternPropsWrapper.style.display = (e.target.value === 'none') ? 'none' : 'block';
-    }
+    updateBgModeUI();
     engine.render();
   });
 
@@ -1757,8 +1799,11 @@ async function initApp() {
     if (bgColorInput) bgColorInput.value = cur.bgColor;
     if (bgColorHex) bgColorHex.value = (cur.bgColor || '#F7C6C8').toUpperCase();
     if (patternSelect) patternSelect.value = cur.pattern;
+    if (bgColorWrapper) {
+      bgColorWrapper.style.display = (cur.pattern === 'transparent') ? 'none' : 'block';
+    }
     if (patternPropsWrapper) {
-      patternPropsWrapper.style.display = (cur.pattern === 'none') ? 'none' : 'block';
+      patternPropsWrapper.style.display = (cur.pattern === 'none' || cur.pattern === 'transparent') ? 'none' : 'block';
     }
     if (patternColorInput) patternColorInput.value = cur.patternColor;
     if (patternColorHex) patternColorHex.value = (cur.patternColor || '#EDBCBE').toUpperCase();
@@ -1863,11 +1908,11 @@ async function initApp() {
     downloadMenu?.classList.remove('open');
   });
 
-  function renderCleanCanvas() {
+  function renderCleanCanvas(isExport = false) {
     const cur = getActiveScene();
     const currentSel = cur.selectedLayerId;
     cur.selectedLayerId = null;
-    engine.render();
+    engine.render(isExport);
     return currentSel;
   }
 
@@ -1876,9 +1921,9 @@ async function initApp() {
     engine.render();
   }
 
-  // Descargar solo la imagen actual
+  // Descargar solo la imagen actual (con transparencia real si el fondo es transparente)
   downloadPngBtn?.addEventListener('click', () => {
-    const sel = renderCleanCanvas();
+    const sel = renderCleanCanvas(true);
     const cur = getActiveScene();
     const filename = `itch-${cur.typeKey}-${cur.width}x${cur.height}.png`;
     downloadCanvas(canvas, filename);
@@ -1902,13 +1947,6 @@ async function initApp() {
     const projName = (currentProject?.name || 'mi-juego').toLowerCase().replace(/\s+/g, '-');
     exportItchProject({ scenesList, activeSceneIndex }, `${projName}.itch`);
     showToast('Exportado .itch');
-  });
-
-  copyBtn?.addEventListener('click', async () => {
-    const sel = renderCleanCanvas();
-    const success = await copyCanvasToClipboard(canvas);
-    restoreSelection(sel);
-    showToast(success ? 'Copiado al portapapeles' : 'Error al copiar');
   });
 
   // 15. VISTA DE ITCH.IO EN VIVO (Cover catálogo y Banner cabecera)

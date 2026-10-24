@@ -18,10 +18,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Audiowide&family=Bangers&family=Bebas+Neue&family=Black+Ops+One&family=Boogaloo&family=Bruno+Ace+SC&family=Bungee&family=Chakra+Petch:wght@700&family=Chango&family=Chewy&family=Cinzel:wght@900&family=Creepster&family=Fredoka:wght@700&family=Inter:wght@400;700;900&family=Lilita+One&family=Luckiest+Guy&family=MedievalSharp&family=Metamorphous&family=Michroma&family=Montserrat:wght@900&family=Nosifer&family=Orbitron:wght@900&family=Oswald:wght@700&family=Permanent+Marker&family=Pixelify+Sans:wght@700&family=Poppins:wght@900&family=Press+Start+2P&family=Righteous&family=Rubik:wght@700;900&family=Russo+One&family=Share+Tech+Mono&family=Silkscreen&family=Sniglet:wght@800&family=Teko:wght@700&family=Titan+One&family=VT323&display=swap" rel="stylesheet">
 
   <!-- Estilos Modulares (Sin degradados - Estilo Limpio Itch.io) -->
-  <link rel="stylesheet" href="src/css/variables.css?v=3.5">
-  <link rel="stylesheet" href="src/css/layout.css?v=3.5">
-  <link rel="stylesheet" href="src/css/components.css?v=3.5">
-  <link rel="stylesheet" href="src/css/mockup.css?v=3.5">
+  <link rel="stylesheet" href="src/css/variables.css?v=3.6">
+  <link rel="stylesheet" href="src/css/layout.css?v=3.6">
+  <link rel="stylesheet" href="src/css/components.css?v=3.6">
+  <link rel="stylesheet" href="src/css/mockup.css?v=3.6">
 </head>
 <body>
 
@@ -155,11 +155,6 @@
           <span>Vista Itch</span>
         </button>
 
-        <button id="copyBtn" class="btn btn-secondary btn-sm" title="Copiar al portapapeles">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-          <span>Copiar</span>
-        </button>
-
         <!-- Dropdown de Descarga Completa -->
         <div class="download-dropdown-wrapper">
           <button id="downloadBtn" class="btn btn-primary btn-sm" title="Opciones de descarga">
@@ -250,15 +245,17 @@
 
           <div class="control-group">
             <span class="group-title">Subir Imagen / Sprite</span>
-            <label class="upload-image-box">
+            <label class="file-upload-box">
               <input type="file" id="imageUpload" accept="image/png, image/jpeg, image/webp" style="display: none;">
-              <div class="upload-plus-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
+              <div class="file-upload-label">
+                <div class="upload-plus-btn-sm">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </div>
+                <span>Subir Imagen</span>
               </div>
-              <span class="upload-image-title">Subir Imagen</span>
             </label>
           </div>
 
@@ -278,6 +275,12 @@
 
           <!-- Edición de Texto -->
           <div id="propGroupText" class="control-group" style="display: none;">
+            <!-- Contenido del Texto -->
+            <div class="control-group">
+              <span class="group-title">Texto</span>
+              <input type="text" id="propTextContent" class="input-text" placeholder="Escribe tu texto..." spellcheck="false">
+            </div>
+
             <!-- Custom Font Picker con Previsualización Real -->
             <div class="control-group">
               <span class="group-title">Tipografía</span>
@@ -363,6 +366,15 @@
               <input type="range" id="propLetterSpacing" class="input-range" min="-4" max="24" value="0">
             </div>
 
+            <!-- Curvatura de Texto (Efecto Arco) -->
+            <div class="slider-container">
+              <div class="slider-header">
+                <span class="slider-label">Curvatura (Arco)</span>
+                <span id="propTextCurveVal" class="slider-val">0%</span>
+              </div>
+              <input type="range" id="propTextCurve" class="input-range" min="-100" max="100" value="0">
+            </div>
+
             <!-- Caja Mayúsculas / Minúsculas -->
             <div class="control-group">
               <span class="group-title">Caja</span>
@@ -370,6 +382,7 @@
                 <option value="none">Normal</option>
                 <option value="uppercase">MAYÚSCULAS</option>
                 <option value="lowercase">minúsculas</option>
+                <option value="capitalize">Capitalizar</option>
               </select>
             </div>
           </div>
@@ -462,8 +475,8 @@
             </div>
           </div>
 
-          <!-- Controles de Patrón (Tablero Rosa) -->
-          <div id="patternControlsWrapper" class="control-group">
+          <!-- Color de Fondo Base (Común a patrón e imagen transparente) -->
+          <div id="bgColorWrapper" class="control-group">
             <div class="color-picker-row">
               <span class="color-picker-label">Color de Fondo Base</span>
               <div class="color-picker-controls">
@@ -471,12 +484,16 @@
                 <input type="color" id="bgColorInput" class="color-input-clean" value="#F7C6C8">
               </div>
             </div>
+          </div>
 
+          <!-- Controles de Patrón (Tablero Rosa) -->
+          <div id="patternControlsWrapper" class="control-group">
             <div class="control-group">
               <span class="group-title">Tipo de Patrón</span>
               <select id="patternSelect" class="input-select">
                 <option value="none" style="font-weight: 800;">Sin Patrón</option>
                 <option value="checker" selected>Cuadrícula</option>
+                <option value="transparent">Transparente</option>
                 <option value="pixel_grid">Rejilla Píxel</option>
                 <option value="isometric">Rejilla Isométrica</option>
                 <option value="scanlines">Líneas CRT</option>
@@ -704,7 +721,7 @@
     </button>
     <button type="button" class="context-menu-item" data-action="edit">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-      <span style="font-weight: 800;">Editar</span>
+      <span style="font-weight: 400;">editar</span>
     </button>
     <button type="button" class="context-menu-item" data-action="group" id="ctxMenuGroupBtn" style="display: none;">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
@@ -747,6 +764,6 @@
   </div>
 
   <!-- JavaScript Modular -->
-  <script type="module" src="src/js/app.js?v=3.5"></script>
+  <script type="module" src="src/js/app.js?v=3.6"></script>
 </body>
 </html>

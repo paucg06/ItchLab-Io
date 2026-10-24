@@ -169,6 +169,7 @@ export async function downloadAllScenesZip(scenesList, engine, zipFilename = 'it
     });
 
     engine.setState(tempScene);
+    engine.render(true);
     const blob = await getCanvasBlobUnder3MB(engine.canvas);
     const ext = blob.type === 'image/jpeg' ? 'jpg' : 'png';
 

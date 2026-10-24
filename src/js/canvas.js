@@ -118,23 +118,27 @@ export class CanvasEngine {
         this.ctx.letterSpacing = `${layer.letterSpacing}px`;
       }
 
-      let text = layer.text || '';
-      if (layer.textTransform === 'uppercase') text = text.toUpperCase();
-      if (layer.textTransform === 'lowercase') text = text.toLowerCase();
-
+      const text = this.getTransformedText(layer.text || '', layer.textTransform);
       const metrics = this.ctx.measureText(text);
       this.ctx.restore();
 
       const padX = 14;
       const padY = 8;
-      const w = metrics.width + padX * 2;
-      const h = size * 1.25 + padY * 2;
+      const w = Math.max(metrics.width + padX * 2, 28);
+      let h = size * 1.25 + padY * 2;
+
+      const curve = layer.curve || 0;
+      if (Math.abs(curve) >= 1 && text.length > 1) {
+        const arcAngle = Math.abs((curve / 100) * (Math.PI * 0.85));
+        const arcHeight = (metrics.width / arcAngle) * (1 - Math.cos(arcAngle / 2));
+        h = Math.max(h, arcHeight + size + padY * 2);
+      }
 
       return {
         x: Math.round(layer.x - w / 2),
         y: Math.round(layer.y - h / 2),
-        w: Math.max(w, 24),
-        h: Math.max(h, 24)
+        w: Math.round(w),
+        h: Math.round(h)
       };
     }
 
@@ -615,16 +619,16 @@ export class CanvasEngine {
     input.className = 'canvas-inline-text-input';
 
     const screenX = rect.left + b.x * scaleX;
-    const screenY = rect.top + (layer.y - (layer.fontSize || 44) * 0.6) * scaleY;
+    const screenY = rect.top + (layer.y - (layer.fontSize || 44) * 0.55) * scaleY;
 
     input.style.position = 'fixed';
     input.style.left = `${screenX}px`;
     input.style.top = `${screenY}px`;
-    input.style.minWidth = `${Math.max(120, b.w * scaleX)}px`;
+    input.style.width = `${Math.max(120, b.w * scaleX)}px`;
     input.style.fontSize = `${Math.max(14, (layer.fontSize || 44) * scaleY)}px`;
     input.style.fontFamily = `"${layer.fontFamily || 'Lilita One'}", sans-serif`;
     input.style.color = layer.color || '#222222';
-    input.style.textAlign = layer.textAlign || 'center';
+    input.style.textAlign = 'center';
     input.style.zIndex = '2000';
 
     document.body.appendChild(input);
@@ -635,8 +639,8 @@ export class CanvasEngine {
     const commit = () => {
       if (saved) return;
       saved = true;
-      const val = input.value.trim();
-      if (val && val !== layer.text) {
+      const val = input.value;
+      if (val !== layer.text) {
         layer.text = val;
         this.onStateChange(this.state);
         this.render();
@@ -644,6 +648,13 @@ export class CanvasEngine {
       }
       input.remove();
     };
+
+    input.addEventListener('input', () => {
+      layer.text = input.value;
+      this.render();
+      const txtProp = document.getElementById('propTextContent');
+      if (txtProp) txtProp.value = input.value;
+    });
 
     input.addEventListener('blur', commit);
     input.addEventListener('keydown', (ev) => {
@@ -653,6 +664,7 @@ export class CanvasEngine {
       } else if (ev.key === 'Escape') {
         saved = true;
         input.remove();
+        this.render();
       }
     });
   }
@@ -759,7 +771,30 @@ export class CanvasEngine {
     this.onActionCommit('align');
   }
 
-  render() {
+  getTransformedText(text, transform) {
+    if (!text) return '';
+    if (transform === 'uppercase') return text.toUpperCase();
+    if (transform === 'lowercase') return text.toLowerCase();
+    if (transform === 'capitalize') {
+      return text.replace(/\b\w/g, c => c.toUpperCase());
+    }
+    return text;
+  }
+
+  drawTransparentCheckerboard(ctx, width, height) {
+    const size = 17;
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = '#C1BEB7';
+    for (let x = 0; x < width; x += size * 2) {
+      for (let y = 0; y < height; y += size * 2) {
+        ctx.fillRect(x, y, size, size);
+        ctx.fillRect(x + size, y + size, size, size);
+      }
+    }
+  }
+
+  render(isExport = false) {
     if (!this.state) return;
     const { width, height, bgMode, bgImage, bgColor, pattern, patternColor, patternScale, patternOpacity, edgeFade, edgeFadeColor, edgeFadeWidth, layers, bgImgScale, bgImgOffsetX, bgImgOffsetY } = this.state;
     const ctx = this.ctx;
@@ -776,8 +811,14 @@ export class CanvasEngine {
     }
 
     if (bgMode === 'image' && activeBgImg && (activeBgImg.naturalWidth > 0 || activeBgImg.width > 0)) {
-      ctx.fillStyle = bgColor || '#F7C6C8';
-      ctx.fillRect(0, 0, width, height);
+      if (pattern === 'transparent') {
+        if (!isExport) {
+          this.drawTransparentCheckerboard(ctx, width, height);
+        }
+      } else {
+        ctx.fillStyle = bgColor || '#F7C6C8';
+        ctx.fillRect(0, 0, width, height);
+      }
 
       const scale = bgImgScale !== undefined ? bgImgScale : 1.0;
       const offX = bgImgOffsetX || 0;
@@ -799,6 +840,10 @@ export class CanvasEngine {
       const drawY = (height - drawH) / 2 + offY;
 
       ctx.drawImage(activeBgImg, drawX, drawY, drawW, drawH);
+    } else if (pattern === 'transparent') {
+      if (!isExport) {
+        this.drawTransparentCheckerboard(ctx, width, height);
+      }
     } else {
       ctx.fillStyle = bgColor || '#F7C6C8';
       ctx.fillRect(0, 0, width, height);
@@ -990,54 +1035,128 @@ export class CanvasEngine {
         ctx.letterSpacing = `${layer.letterSpacing}px`;
       }
 
-      ctx.textAlign = layer.textAlign || 'center';
+      ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      let text = layer.text || '';
-      if (layer.textTransform === 'uppercase') text = text.toUpperCase();
-      if (layer.textTransform === 'lowercase') text = text.toLowerCase();
+      const text = this.getTransformedText(layer.text || '', layer.textTransform);
+      const strokeWidth = layer.strokeWidth || 0;
+      const shadowDepth = layer.shadowDepth || 0;
+      const curve = layer.curve || 0;
 
-      if (layer.shadowBlur > 0) {
-        ctx.save();
-        ctx.shadowColor = layer.shadowColor || 'rgba(0,0,0,0.5)';
-        ctx.shadowBlur = layer.shadowBlur || 0;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 2;
+      if (Math.abs(curve) >= 1 && text.length > 1) {
+        this.drawCurvedText(ctx, text, layer.x, layer.y, curve, {
+          color: layer.color || '#222222',
+          strokeWidth,
+          strokeColor: layer.strokeColor || '#000000',
+          shadowDepth,
+          shadowBlur: layer.shadowBlur || 0,
+          shadowColor: layer.shadowColor || '#ffffff'
+        });
+      } else {
+        if (layer.shadowBlur > 0) {
+          ctx.save();
+          ctx.shadowColor = layer.shadowColor || 'rgba(0,0,0,0.5)';
+          ctx.shadowBlur = layer.shadowBlur || 0;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 2;
+          ctx.fillStyle = layer.color || '#222222';
+          ctx.fillText(text, layer.x, layer.y);
+          ctx.restore();
+        }
+
+        if (shadowDepth > 0) {
+          ctx.fillStyle = layer.shadowColor || '#ffffff';
+          for (let d = 1; d <= shadowDepth; d++) {
+            if (strokeWidth > 0) {
+              ctx.strokeStyle = layer.shadowColor || '#000000';
+              ctx.lineWidth = strokeWidth;
+              ctx.lineJoin = 'round';
+              ctx.strokeText(text, layer.x + d, layer.y + d);
+            }
+            ctx.fillText(text, layer.x + d, layer.y + d);
+          }
+        }
+
+        if (strokeWidth > 0) {
+          ctx.strokeStyle = layer.strokeColor || '#000000';
+          ctx.lineWidth = strokeWidth;
+          ctx.lineJoin = 'round';
+          ctx.strokeText(text, layer.x, layer.y);
+        }
+
         ctx.fillStyle = layer.color || '#222222';
         ctx.fillText(text, layer.x, layer.y);
-        ctx.restore();
       }
-
-      const strokeWidth = layer.strokeWidth || 0;
-
-      // Sombra 3D sólida extruida
-      const shadowDepth = layer.shadowDepth || 0;
-      if (shadowDepth > 0) {
-        ctx.fillStyle = layer.shadowColor || '#ffffff';
-        for (let d = 1; d <= shadowDepth; d++) {
-          if (strokeWidth > 0) {
-            ctx.strokeStyle = layer.shadowColor || '#000000';
-            ctx.lineWidth = strokeWidth;
-            ctx.lineJoin = 'round';
-            ctx.strokeText(text, layer.x + d, layer.y + d);
-          }
-          ctx.fillText(text, layer.x + d, layer.y + d);
-        }
-      }
-
-      // Contorno / Stroke
-      if (strokeWidth > 0) {
-        ctx.strokeStyle = layer.strokeColor || '#000000';
-        ctx.lineWidth = strokeWidth;
-        ctx.lineJoin = 'round';
-        ctx.strokeText(text, layer.x, layer.y);
-      }
-
-      ctx.fillStyle = layer.color || '#222222';
-      ctx.fillText(text, layer.x, layer.y);
     }
 
     ctx.restore();
+  }
+
+  drawCurvedText(ctx, text, x, y, curve, style) {
+    const chars = Array.from(text);
+    const charWidths = chars.map(c => ctx.measureText(c).width);
+    const totalWidth = charWidths.reduce((a, b) => a + b, 0);
+
+    const maxAngle = Math.PI * 0.85;
+    const arcAngle = (curve / 100) * maxAngle;
+    const radius = totalWidth / arcAngle;
+
+    const circleCenterX = x;
+    const circleCenterY = y + radius;
+
+    let curDist = -totalWidth / 2;
+
+    for (let i = 0; i < chars.length; i++) {
+      const char = chars[i];
+      const w = charWidths[i];
+      const midDist = curDist + w / 2;
+      const charAngle = midDist / radius;
+
+      const polarAngle = (curve > 0) ? (-Math.PI / 2 + charAngle) : (Math.PI / 2 - charAngle);
+      const px = circleCenterX + radius * Math.cos(polarAngle);
+      const py = circleCenterY + radius * Math.sin(polarAngle);
+      const rot = (curve > 0) ? charAngle : -charAngle;
+
+      ctx.save();
+      ctx.translate(px, py);
+      ctx.rotate(rot);
+
+      if (style.shadowBlur > 0) {
+        ctx.save();
+        ctx.shadowColor = style.shadowColor || 'rgba(0,0,0,0.5)';
+        ctx.shadowBlur = style.shadowBlur;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 2;
+        ctx.fillStyle = style.color;
+        ctx.fillText(char, 0, 0);
+        ctx.restore();
+      }
+
+      if (style.shadowDepth > 0) {
+        ctx.fillStyle = style.shadowColor;
+        for (let d = 1; d <= style.shadowDepth; d++) {
+          if (style.strokeWidth > 0) {
+            ctx.strokeStyle = style.shadowColor;
+            ctx.lineWidth = style.strokeWidth;
+            ctx.strokeText(char, d, d);
+          }
+          ctx.fillText(char, d, d);
+        }
+      }
+
+      if (style.strokeWidth > 0) {
+        ctx.strokeStyle = style.strokeColor;
+        ctx.lineWidth = style.strokeWidth;
+        ctx.lineJoin = 'round';
+        ctx.strokeText(char, 0, 0);
+      }
+
+      ctx.fillStyle = style.color;
+      ctx.fillText(char, 0, 0);
+
+      ctx.restore();
+      curDist += w;
+    }
   }
 
   drawStarPath(ctx, cx, cy, spikes, outerRadius, innerRadius) {
